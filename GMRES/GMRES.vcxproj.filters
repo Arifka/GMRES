@@ -18,12 +18,12 @@
     <ClCompile Include="GMRES.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="MatrixInterface.cpp">
+    <ClCompile Include="GMRESInterface.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MatrixInterface.h">
+    <ClInclude Include="GMRESInterface.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

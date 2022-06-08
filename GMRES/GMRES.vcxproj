@@ -128,10 +128,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="GMRES.cpp" />
-    <ClCompile Include="MatrixInterface.cpp" />
+    <ClCompile Include="GMRESInterface.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MatrixInterface.h" />
+    <ClInclude Include="GMRESInterface.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

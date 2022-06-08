@@ -1,10 +1,10 @@
 ﻿#include <iostream>
 #include <vector>
-#include "MatrixInterface.h"
+#include "GMRESInterface.h"
 
 
 using namespace std;
-using namespace MatrixInterface;
+using namespace GMRESInterface;
 
 int main()
 {
@@ -59,12 +59,23 @@ int main()
     vector<vector<double>> temp_1 = { {1,2}, {1,2} };
     vector<vector<double>> temp_2 = { {3,4}, {3,4} };
 
-    vector<vector<double>> temp_3 = MatrixInterface::MatrixMultiply(temp_1, temp_2);
+    vector<vector<double>> temp_3 = MatrixByMatrix(temp_1, temp_2);
+    vector<vector<double>> temp_4 = MatrixByDigit(temp_1, 1.0/2.0);
     for (int i = 0; i < temp_3.size(); i++)
 
     {
         for (int j = 0; j < temp_3[i].size(); j++) {
             cout << temp_3[i][j] << "\t";
+        }
+        cout << endl;
+    }
+    
+    cout << endl << endl;
+    for (int i = 0; i < temp_4.size(); i++)
+
+    {
+        for (int j = 0; j < temp_4[i].size(); j++) {
+            cout << temp_4[i][j] << "\t";
         }
         cout << endl;
     }
