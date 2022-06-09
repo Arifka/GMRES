@@ -1,5 +1,24 @@
 #include "GMRESInterface.h"
 
+vector<vector<double>> GMRESInterface::NachPriblizh(vector<vector<double>> Matrix)
+{
+    vector<vector<double>> temp(Matrix.size());
+    for (int i = 0; i < Matrix.size(); i++)
+    {
+        for (int j = 0; j < Matrix[i].size(); j++) temp[i].push_back(0.0);
+    }
+    return temp;
+}
+
+vector<double> GMRESInterface::NachPriblizh(vector<double> vec) {
+    vector<double> temp(vec.size());
+    for (int i = 0; i < vec.size(); i++)
+    {
+        temp[i] = 0.0;
+    }
+    return temp;
+}
+
 vector<vector<double>> GMRESInterface::MatrixByMatrix(vector<vector<double>> LMatrix, vector<vector<double>> RMatrix)
 {
     vector<vector<double>> temp(LMatrix.size());
@@ -14,6 +33,21 @@ vector<vector<double>> GMRESInterface::MatrixByMatrix(vector<vector<double>> LMa
             }
             temp[i].push_back(sum);
         }
+    }
+    return temp;
+}
+
+vector<double> GMRESInterface::MatrixByVec(vector<vector<double>> LMatrix, vector<double> RVec)
+{
+    vector<double> temp;
+    for (int i = 0; i < LMatrix.size(); i++)
+    {
+        double sum = 0.0;
+        for (int j = 0; j < RVec.size(); j++)
+        {
+            sum += LMatrix[i][j] * RVec[j];
+        }
+        temp.push_back(sum);
     }
     return temp;
 }
