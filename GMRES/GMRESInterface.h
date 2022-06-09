@@ -7,6 +7,8 @@ namespace GMRESInterface
 {
 	vector<vector<double>> NachPriblizh(vector<vector<double>> Matrix);
 	vector<double> NachPriblizh(vector<double> vec);
+	vector<vector<double>> RotateMatrix(vector<vector<double>> matrix_psi, vector<vector<double>> matrix_sigma, int ind);
+	vector<double> VecByMatrix(vector<double> Rvec, vector<vector<double>> LMatrix);
 	vector<vector<double>> MatrixByMatrix(vector<vector<double>> LMatrix, vector<vector<double>> RMatrix);
 	vector<double> MatrixByVec(vector<vector<double>> LMatrix, vector<double> RVec);
 	vector<vector<double>> MatrixByDigit(vector<vector<double>> LMatrix, double digit);

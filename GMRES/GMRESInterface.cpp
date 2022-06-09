@@ -19,6 +19,46 @@ vector<double> GMRESInterface::NachPriblizh(vector<double> vec) {
     return temp;
 }
 
+vector<vector<double>> GMRESInterface::RotateMatrix(vector<vector<double>> matrix_psi, vector<vector<double>> matrix_sigma, int ind)
+{
+    vector<vector<double>> temp(matrix_psi.size());
+    for (int i = 0; i < matrix_psi.size(); i++)
+    {
+        for (int j = 0; j < matrix_psi.size(); j++) {
+            if (i == j) temp[i].push_back(1.0);
+            else temp[i].push_back(0.0);
+        }
+    }
+    /*temp[ind][ind] = matrix_sigma[ind][ind] / (sqrtl(matrix_sigma[ind][ind] * matrix_sigma[ind][ind] + matrix_sigma[ind + 1][ind] * matrix_sigma[ind + 1][ind]));
+    temp[ind + 1][ind + 1] = temp[ind][ind];
+
+    temp[ind][ind + 1] = matrix_sigma[ind + 1][ind] / (sqrtl(matrix_sigma[ind][ind] * matrix_sigma[ind][ind] + matrix_sigma[ind + 1][ind] * matrix_sigma[ind + 1][ind]));
+    temp[ind + 1][ind] = (-1.0) * temp[ind][ind + 1];*/
+    //tarnspon
+    temp[ind][ind] = matrix_sigma[ind][ind] / (sqrtl(matrix_sigma[ind][ind] * matrix_sigma[ind][ind] + matrix_sigma[ind][ind+1] * matrix_sigma[ind][ind+1]));
+    temp[ind + 1][ind + 1] = temp[ind][ind];
+
+    temp[ind+1][ind] = matrix_sigma[ind][ind+1] / (sqrtl(matrix_sigma[ind][ind] * matrix_sigma[ind][ind] + matrix_sigma[ind][ind+1] * matrix_sigma[ind][ind+1]));
+    temp[ind][ind+1] = (-1.0) * temp[ind+1][ind];
+    return temp;
+}
+
+vector<double> GMRESInterface::VecByMatrix(vector<double> Lvec, vector<vector<double>> RMatrix)
+{
+    vector<double> temp;
+    for (int i = 0; i < Lvec.size(); i++)
+    {
+        double sum = 0.0;
+        for (int j = 0; j < RMatrix.size(); j++)
+        {
+            sum += Lvec[j] * RMatrix[j][i];
+        }
+        temp.push_back(sum);
+    }
+    return temp;
+    
+}
+
 vector<vector<double>> GMRESInterface::MatrixByMatrix(vector<vector<double>> LMatrix, vector<vector<double>> RMatrix)
 {
     vector<vector<double>> temp(LMatrix.size());
