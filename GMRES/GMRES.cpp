@@ -2,9 +2,12 @@
 #include <fstream>
 #include <vector>
 #include "GMRESInterface.h"
+#include "Data.h"
 
 using namespace std;
 using namespace GMRESInterface;
+
+
 
 void MatrixView(vector<vector<double>> matrix) {
     for (int i = 0; i < matrix.size(); i++)
@@ -50,71 +53,47 @@ void vectorPrintFile(vector<double> vec, ostream& fout) {
 int main()
 {
     ofstream fout("output.txt");
-    int m = 8;
-    double eps = 10E-5;
+    //int N = 4;
+    int m = 5;
+    double eps = 10E-3;
     vector<double> vec_q;
-    vector<vector<double>> matrix_K(9);
-    vector<double> vec_X;
-    for (int i = 0; i < 9; i++)
-    {
-        for (int j = 0; j < 9; j++) {
-            if (i == j) {
-                matrix_K[i].push_back(4.0);
-            }
-            else if ((abs(j - i) == 1 or abs(j - i) == 3)) matrix_K[i].push_back(-1.0);
-            else
-            {
-                matrix_K[i].push_back(0);
-            }
-        }
-    }
+    vector<vector<double>> matrix_K((data::N - 1) * (data::N - 1));
+    //vectorPrintFile(matrix_K, fout);
+    vector<double> vec_X((data::N - 1) * (data::N - 1));
+    
 
-    matrix_K[2][3] = 0;
-    matrix_K[3][2] = 0;
-    matrix_K[5][6] = 0;
-    matrix_K[6][5] = 0;
+    matrix_K = data::fillingVectorK(data::N);
 
-    MatrixView(matrix_K);
+    //MatrixView(matrix_K);
 
     cout << endl << endl;
 
-    vec_X.push_back(1.0 / 24.0);
-    vec_X.push_back(41.0 / 768.0);
-    vec_X.push_back(1.0 / 24.0);
-    vec_X.push_back(41.0 / 768.0);
-    vec_X.push_back(13.0 / 192.0);
-    vec_X.push_back(41.0 / 768.0);
-    vec_X.push_back(1.0 / 24.0);
-    vec_X.push_back(41.0 / 768.0);
-    vec_X.push_back(1.0 / 24.0);
+    vec_X = data::fillVectorX(data::N);
 
-    vector<vector<double>> EMatrix(9);
+    //MatrixView(vec_X);
 
-    for (int i = 0; i < 9; i++)
+    vector<vector<double>> EMatrix((data::N - 1) * (data::N - 1));
+
+    for (int i = 0; i < (data::N - 1) * (data::N - 1); i++)
     {
-        for (int j = 0; j < 9; j++)
+        for (int j = 0; j < (data::N - 1) * (data::N - 1); j++)
         {
             if (i == j) EMatrix[i].push_back(1);
             else EMatrix[i].push_back(0);
         }
     }
 
-    vector<vector<double>> temp_1 = { { 1, 2}, { 5, 3} };
-    vector<double> temp_2 = { 7, 12 };
-
-    vector<double> temp_3 = MatrixByVec(temp_1, temp_2);
-
-    MatrixView(MatrixByVec(temp_1, temp_2));
 
     vec_q = vec_X;
     vector<double> vec_R_0 = vec_X;
     vector<double> vec_R_1;
     vec_R_0 = VecMinusVec(vec_X, MatrixByVec(matrix_K, vec_q));
     vector<double> vec_R_ = vec_X;
+    //1 stage
+
+    vec_q = NachPriblizh(vec_q);
     // EuqlidNorm(MatrixByVec(EMatrix, vec_R_0)) <= eps * EuqlidNorm(MatrixByVec(EMatrix, vec_R_0))
     do {
-        //1 stage
-        vec_q = NachPriblizh(vec_q);
         //2 stage
         vec_R_ = VecMinusVec(vec_X, MatrixByVec(matrix_K, vec_q));
         vec_R_1 = MatrixByVec(EMatrix, vec_R_);
@@ -150,7 +129,9 @@ int main()
             //12 stage
             else teta.push_back(VecByDigit(rho, 1.0 / EuqlidNorm(rho)));
         } //13 stage
-        vectorPrintFile(sigma, fout);
+        sigma = Transponir(sigma);
+
+        //vectorPrintFile(teta, fout);
         vector<double> vec_e_1(m+1);
         vec_e_1 = NachPriblizh(vec_e_1);
         vec_e_1.front() = 1.0;
@@ -161,17 +142,14 @@ int main()
         {
             matrix_psi = RotateMatrix(matrix_psi, sigma, i);
             //vectorPrintFile(matrix_psi, fout);
-            sigma = MatrixByMatrix(sigma, matrix_psi);
+            sigma = MatrixByMatrix(matrix_psi, sigma);
             //vectorPrintFile(sigma, fout);
-            vec_e_1_sh = VecByMatrix(vec_e_1_sh, matrix_psi);
+            vec_e_1_sh = MatrixByVec(matrix_psi, vec_e_1_sh);
             //vectorPrintFile(vec_e_1_sh, fout);
         }
-        for (int i = 0; i < m; i++)
-        {
-            sigma[i].pop_back();
-        }
-        vectorPrintFile(sigma, fout);
-        vectorPrintFile(vec_e_1_sh, fout);
+        sigma.pop_back();
+        //vectorPrintFile(sigma, fout);
+        //vectorPrintFile(vec_e_1_sh, fout);
         vector<double> vec_z(m+1);
         vec_z = NachPriblizh(vec_z);
 
@@ -180,11 +158,11 @@ int main()
             double summm = 0.0;
             for (int j = 0; j < i; j++)
             {
-                summm += sigma[j][i]*vec_z[m-j];
+                summm += sigma[m-1-i][m-1-j]*vec_z[m-1-j];
             }
             vec_z[m - i] = (vec_e_1_sh[m - i] - summm) / sigma[m-1 - i][m-1 - i];
         }
-        vectorPrintFile(vec_z, fout);
+        //vectorPrintFile(vec_z, fout);
         vector<double> temp(teta[0].size());
         for (int i = 0; i < m; i++)
         {
@@ -195,7 +173,7 @@ int main()
         
     } while (EuqlidNorm(MatrixByVec(EMatrix, vec_R_)) <= eps * EuqlidNorm(MatrixByVec(EMatrix, vec_R_0)));
 
-    vectorPrintFile(MatrixByVec(matrix_K, vec_q), fout);
+    //vectorPrintFile(MatrixByVec(matrix_K, vec_q), fout);
     fout.close();
     return 0;
 }

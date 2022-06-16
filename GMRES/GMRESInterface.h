@@ -1,10 +1,12 @@
 #pragma once
 #include <vector>
 #include <math.h>
+#include <algorithm>
 using namespace std;
 
 namespace GMRESInterface
 {
+	vector<vector<double>> Transponir(vector<vector<double>> matrix);
 	vector<vector<double>> NachPriblizh(vector<vector<double>> Matrix);
 	vector<double> NachPriblizh(vector<double> vec);
 	vector<vector<double>> RotateMatrix(vector<vector<double>> matrix_psi, vector<vector<double>> matrix_sigma, int ind);

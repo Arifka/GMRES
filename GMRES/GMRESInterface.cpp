@@ -1,5 +1,24 @@
 #include "GMRESInterface.h"
 
+vector<vector<double>> GMRESInterface::Transponir(vector<vector<double>> matrix)
+{
+    size_t maxSize = 0;
+    for (int i = 0; i < matrix.size(); i++)
+    {
+        maxSize = max(maxSize, matrix[i].size());
+    }
+    vector<vector<double>> temp(maxSize);
+    // temp = NachPriblizh(temp);
+    for (int i = 0; i < matrix.size(); i++)
+    {
+        for (int j = 0; j < matrix[i].size(); j++)
+        {
+            temp[j].push_back(matrix[i][j]);
+        }
+    }
+    return temp;
+}
+
 vector<vector<double>> GMRESInterface::NachPriblizh(vector<vector<double>> Matrix)
 {
     vector<vector<double>> temp(Matrix.size());
@@ -29,17 +48,17 @@ vector<vector<double>> GMRESInterface::RotateMatrix(vector<vector<double>> matri
             else temp[i].push_back(0.0);
         }
     }
-    /*temp[ind][ind] = matrix_sigma[ind][ind] / (sqrtl(matrix_sigma[ind][ind] * matrix_sigma[ind][ind] + matrix_sigma[ind + 1][ind] * matrix_sigma[ind + 1][ind]));
+    temp[ind][ind] = matrix_sigma[ind][ind] / (sqrtl(matrix_sigma[ind][ind] * matrix_sigma[ind][ind] + matrix_sigma[ind + 1][ind] * matrix_sigma[ind + 1][ind]));
     temp[ind + 1][ind + 1] = temp[ind][ind];
 
     temp[ind][ind + 1] = matrix_sigma[ind + 1][ind] / (sqrtl(matrix_sigma[ind][ind] * matrix_sigma[ind][ind] + matrix_sigma[ind + 1][ind] * matrix_sigma[ind + 1][ind]));
-    temp[ind + 1][ind] = (-1.0) * temp[ind][ind + 1];*/
+    temp[ind + 1][ind] = (-1.0) * temp[ind][ind + 1];
     //tarnspon
-    temp[ind][ind] = matrix_sigma[ind][ind] / (sqrtl(matrix_sigma[ind][ind] * matrix_sigma[ind][ind] + matrix_sigma[ind][ind+1] * matrix_sigma[ind][ind+1]));
+    /*temp[ind][ind] = matrix_sigma[ind][ind] / (sqrtl(matrix_sigma[ind][ind] * matrix_sigma[ind][ind] + matrix_sigma[ind][ind+1] * matrix_sigma[ind][ind+1]));
     temp[ind + 1][ind + 1] = temp[ind][ind];
 
     temp[ind+1][ind] = matrix_sigma[ind][ind+1] / (sqrtl(matrix_sigma[ind][ind] * matrix_sigma[ind][ind] + matrix_sigma[ind][ind+1] * matrix_sigma[ind][ind+1]));
-    temp[ind][ind+1] = (-1.0) * temp[ind+1][ind];
+    temp[ind][ind+1] = (-1.0) * temp[ind+1][ind];*/
     return temp;
 }
 
