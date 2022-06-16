@@ -51,7 +51,7 @@ int main()
 {
     ofstream fout("output.txt");
     int m = 8;
-    double eps = 10E-3;
+    double eps = 10E-5;
     vector<double> vec_q;
     vector<vector<double>> matrix_K(9);
     vector<double> vec_X;
@@ -195,6 +195,7 @@ int main()
         
     } while (EuqlidNorm(MatrixByVec(EMatrix, vec_R_)) <= eps * EuqlidNorm(MatrixByVec(EMatrix, vec_R_0)));
 
+    vectorPrintFile(MatrixByVec(matrix_K, vec_q), fout);
     fout.close();
     return 0;
 }
