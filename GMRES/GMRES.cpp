@@ -53,10 +53,9 @@ void vectorPrintFile(vector<double> vec, ostream& fout) {
 int main()
 {
     ofstream fout("output.txt");
-    //int N = 4;
     int m = 5;
-    double eps = 10E-3;
-    vector<double> vec_q;
+    double eps = 1E-10;
+    vector<double> vec_q((data::N - 1) * (data::N - 1), 0.0);
     vector<vector<double>> matrix_K((data::N - 1) * (data::N - 1));
     //vectorPrintFile(matrix_K, fout);
     vector<double> vec_X((data::N - 1) * (data::N - 1));
@@ -84,21 +83,25 @@ int main()
     }
 
 
-    vec_q = vec_X;
+    //vec_q = vec_X;
+    vec_q = NachPriblizh(vec_q);
     vector<double> vec_R_0 = vec_X;
     vector<double> vec_R_1;
     vec_R_0 = VecMinusVec(vec_X, MatrixByVec(matrix_K, vec_q));
-    vector<double> vec_R_ = vec_X;
+    vector<double> vec_R_ = vec_R_0;
     //1 stage
 
-    vec_q = NachPriblizh(vec_q);
+    /*cout << EuqlidNorm(MatrixByVec(EMatrix, vec_R_)) << endl;
+    cout << eps * EuqlidNorm(MatrixByVec(EMatrix, vec_R_0));*/
     // EuqlidNorm(MatrixByVec(EMatrix, vec_R_0)) <= eps * EuqlidNorm(MatrixByVec(EMatrix, vec_R_0))
+    int counter = 0;
     do {
         //2 stage
+        counter++;
         vec_R_ = VecMinusVec(vec_X, MatrixByVec(matrix_K, vec_q));
         vec_R_1 = MatrixByVec(EMatrix, vec_R_);
         //3 stage
-        double varrho = EuqlidNorm(vec_R_1);
+        long double varrho = EuqlidNorm(vec_R_1);
         //4 stage
         vector<vector<double>> teta;
         teta.push_back(VecByDigit(vec_R_1, 1.0 / varrho));
@@ -148,9 +151,10 @@ int main()
             //vectorPrintFile(vec_e_1_sh, fout);
         }
         sigma.pop_back();
+        vec_e_1_sh.pop_back();
         //vectorPrintFile(sigma, fout);
         //vectorPrintFile(vec_e_1_sh, fout);
-        vector<double> vec_z(m+1);
+        vector<double> vec_z(m);
         vec_z = NachPriblizh(vec_z);
 
         for (int i = 0; i < m; i++)
@@ -160,18 +164,47 @@ int main()
             {
                 summm += sigma[m-1-i][m-1-j]*vec_z[m-1-j];
             }
-            vec_z[m - i] = (vec_e_1_sh[m - i] - summm) / sigma[m-1 - i][m-1 - i];
+            vec_z[m-1 - i] = (vec_e_1_sh[m-1 - i] - summm) / sigma[m-1 - i][m-1 - i];
         }
         //vectorPrintFile(vec_z, fout);
-        vector<double> temp(teta[0].size());
+        vector<double> temp(teta[0].size(), 0.0);
         for (int i = 0; i < m; i++)
         {
             temp = VecAddVec(temp, VecByDigit(teta[i], vec_z[i]));
         }
         vec_q = VecAddVec(vec_q, temp);
         vectorPrintFile(vec_q, fout);
-        
-    } while (EuqlidNorm(MatrixByVec(EMatrix, vec_R_)) <= eps * EuqlidNorm(MatrixByVec(EMatrix, vec_R_0)));
+        cout << "Iteration #" << counter-1 <<" end!\n\n";
+        fout << "Iteration #" << counter - 1 << " end!\n\n";
+    } while (EuqlidNorm(MatrixByVec(EMatrix, vec_R_)) > eps * EuqlidNorm(MatrixByVec(EMatrix, vec_R_0)));
+
+    vector<double>temp_uzl;
+
+    for (int i = 1; i < data::N; i++)
+    {
+        for (int j = 1; j < data::N; j++) {
+            double x = data::x(i, data::h);
+            double y = data::y(j, data::h);
+            temp_uzl.push_back(x * x * y * y - y * y * x - x * x * y + x * y);
+            //temp_uzl[i][j] = ((double)i * (double)i * h * h - (double)i * h) * ((double)j * (double)j * h * h - (double)j * h);
+        }
+    }
+
+    //vectorPrintFile(vec_q, fout);
+
+    vectorPrintFile(temp_uzl, fout);
+
+    double max = 0.0;
+    int index_max = 0;
+    for (int i = 0; i < (data::N-1)*(data::N-1); i++)
+    {
+        if (max < abs(vec_q[i] - temp_uzl[i])) {
+            max = abs(vec_q[i] - temp_uzl[i]);
+            index_max = i;
+        }
+    }
+
+    fout << endl << endl << max << endl << index_max;
 
     //vectorPrintFile(MatrixByVec(matrix_K, vec_q), fout);
     fout.close();
