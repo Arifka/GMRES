@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <fstream>
+#include <string>
 #include <vector>
 #include "GMRESInterface.h"
 #include "Data.h"
@@ -52,9 +53,18 @@ void vectorPrintFile(vector<double> vec, ostream& fout) {
 
 int main()
 {
-    ofstream fout("output.txt");
     int m = 5;
-    double eps = 1E-10;
+    double eps = 1E-3;
+
+    string fileName = "N";
+    fileName.append(std::to_string(data::N));
+    fileName += "_eps";
+    fileName.append(std::to_string(eps));
+    fileName += "_m";
+    fileName.append(std::to_string(m));
+    fileName += ".txt";
+    ofstream fout(fileName);
+
     vector<double> vec_q((data::N - 1) * (data::N - 1), 0.0);
     vector<vector<double>> matrix_K((data::N - 1) * (data::N - 1));
     //vectorPrintFile(matrix_K, fout);
@@ -62,11 +72,7 @@ int main()
     
 
     matrix_K = data::fillingVectorK(data::N);
-
-    //MatrixView(matrix_K);
-
-    cout << endl << endl;
-
+    
     vec_X = data::fillVectorX(data::N);
 
     //MatrixView(vec_X);
@@ -173,9 +179,10 @@ int main()
             temp = VecAddVec(temp, VecByDigit(teta[i], vec_z[i]));
         }
         vec_q = VecAddVec(vec_q, temp);
-        vectorPrintFile(vec_q, fout);
+        //vectorPrintFile(vec_q, fout);
         cout << "Iteration #" << counter-1 <<" end!\n\n";
-        fout << "Iteration #" << counter - 1 << " end!\n\n";
+        fout << "Iteration #" << counter - 1 << " end!\t" << EuqlidNorm(MatrixByVec(EMatrix, vec_R_)) << endl << endl;
+
     } while (EuqlidNorm(MatrixByVec(EMatrix, vec_R_)) > eps * EuqlidNorm(MatrixByVec(EMatrix, vec_R_0)));
 
     vector<double>temp_uzl;
@@ -191,9 +198,10 @@ int main()
     }
 
     //vectorPrintFile(vec_q, fout);
-
-    vectorPrintFile(temp_uzl, fout);
-
+    vectorPrintFile(vec_X, fout);
+    //vectorPrintFile(temp_uzl, fout);
+    if (vec_q.size() == temp_uzl.size()) cout << "size equal";
+    else cout << "size not equal";
     double max = 0.0;
     int index_max = 0;
     for (int i = 0; i < (data::N-1)*(data::N-1); i++)
