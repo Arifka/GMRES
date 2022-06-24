@@ -16,7 +16,7 @@ namespace data {
 
 
     double f(double x, double y) {
-        return -2.0 * (x * (x - 1.0) + y * (y - 1.0));
+        return 0.0-2.0 * (x * (x - 1.0) + y * (y - 1.0));
     }
 
 	vector<vector<double>> fillingVectorK(int N) {
@@ -52,7 +52,7 @@ namespace data {
             vector<double> temp_2;
             for (int j = 0; j < N+1; j++)
             {
-                temp_2.push_back(f(x(j, h), y(i, h)));
+                temp_2.push_back(f(x(i, h), y(j, h)));
             }
             temp.push_back(temp_2);
         }
