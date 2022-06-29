@@ -10,7 +10,7 @@ using namespace GMRESInterface;
 
 
 
-void MatrixView(vector<vector<double>> matrix) {
+void MatrixView(vector<vector<double>> &matrix) {
     for (int i = 0; i < matrix.size(); i++)
     {
         for (int j = 0; j < matrix[i].size(); j++) {
@@ -21,14 +21,14 @@ void MatrixView(vector<vector<double>> matrix) {
     cout << endl << endl;
 }
 
-void MatrixView(vector<double> vec) {
+void MatrixView(vector<double> &vec) {
     for (int j = 0; j < vec.size(); j++) {
         cout << vec[j] << endl;
     }
     cout << endl << endl;
 }
 
-void vectorPrintFile(vector<vector<double>> vec, ostream& fout) {
+void vectorPrintFile(vector<vector<double>> &vec, ostream& fout) {
     fout.setf(ios::left);
     for (int i = 0; i < vec.size(); i++) {
         for (int j = 0; j < vec[i].size(); j++) {
@@ -41,7 +41,7 @@ void vectorPrintFile(vector<vector<double>> vec, ostream& fout) {
     fout << endl << endl;
 }
 
-void vectorPrintFile(vector<double> vec, ostream& fout) {
+void vectorPrintFile(vector<double> &vec, ostream& fout) {
     fout.setf(ios::left); 
         for (int j = 0; j < vec.size(); j++) {
             fout << vec[j];
@@ -67,13 +67,14 @@ int main()
 
     vector<double> vec_q((data::N - 1) * (data::N - 1), 0.0);
     vector<vector<double>> matrix_K((data::N - 1) * (data::N - 1));
-    //vectorPrintFile(matrix_K, fout);
+    
     vector<double> vec_X((data::N - 1) * (data::N - 1));
     
 
-    matrix_K = data::fillingVectorK(data::N);
-    
-    vec_X = data::fillVectorX(data::N);
+    matrix_K = data::fillingVectorK(matrix_K, data::N);
+    //vectorPrintFile(matrix_K, fout);
+    vec_X = data::fillVectorX(vec_X, data::N);
+    //vectorPrintFile(vec_X, fout);
 
     //MatrixView(vec_X);
 
@@ -93,18 +94,24 @@ int main()
     vec_q = NachPriblizh(vec_q);
     vector<double> vec_R_0 = vec_X;
     vector<double> vec_R_1;
-    vec_R_0 = VecMinusVec(vec_X, MatrixByVec(matrix_K, vec_q));
+    vector<double> TEMP = MatrixByVec(matrix_K, vec_q);
+    vec_R_0 = VecMinusVec(vec_X, TEMP);
     vector<double> vec_R_ = vec_R_0;
     //1 stage
-
+    TEMP = MatrixByVec(EMatrix, vec_R_);
+    long double NormTemp = EuqlidNorm(TEMP);
+    TEMP = MatrixByVec(EMatrix, vec_R_0);
+    long double NormZero = eps * EuqlidNorm(TEMP);
     /*cout << EuqlidNorm(MatrixByVec(EMatrix, vec_R_)) << endl;
     cout << eps * EuqlidNorm(MatrixByVec(EMatrix, vec_R_0));*/
     // EuqlidNorm(MatrixByVec(EMatrix, vec_R_0)) <= eps * EuqlidNorm(MatrixByVec(EMatrix, vec_R_0))
     int counter = 0;
-    while (EuqlidNorm(MatrixByVec(EMatrix, vec_R_)) > eps * EuqlidNorm(MatrixByVec(EMatrix, vec_R_0))) {
+    while (NormTemp > NormZero) {
         //2 stage
         counter++;
-        vec_R_ = VecMinusVec(vec_X, MatrixByVec(matrix_K, vec_q));
+        TEMP = MatrixByVec(matrix_K, vec_q);
+        vec_R_ = VecMinusVec(vec_X, TEMP);
+        NormTemp = EuqlidNorm(vec_R_);
         vec_R_1 = MatrixByVec(EMatrix, vec_R_);
         //3 stage
         long double varrho = EuqlidNorm(vec_R_1);
@@ -130,8 +137,9 @@ int main()
                 //8 stage
                 _sigma[i] = ScalarVecByVec(rho, teta[i]);
                 //9 stage
-                rho = VecMinusVec(rho, VecByDigit(teta[i], _sigma[i]));
-                vectorPrintFile(rho, fout);
+                TEMP = VecByDigit(teta[i], _sigma[i]);
+                rho = VecMinusVec(rho, TEMP);
+                //vectorPrintFile(rho, fout);
             } //10 stage
             //11 stage
             _sigma[i] = EuqlidNorm(rho);
@@ -141,20 +149,20 @@ int main()
             else teta.push_back(VecByDigit(rho, 1.0 / EuqlidNorm(rho)));
         } //13 stage
         sigma = Transponir(sigma);
-        vectorPrintFile(sigma, fout);
+        //vectorPrintFile(sigma, fout);
         //vectorPrintFile(teta, fout);
-        vector<double> vec_e_1(m + 1);
+        vector<double> vec_e_1(m+1);
         vec_e_1 = NachPriblizh(vec_e_1);
         vec_e_1.front() = 1.0;
-        vector<double> vec_e_1_sh(m + 1);
+        vector<double> vec_e_1_sh(m+1);
         vector<vector<double>> matrix_psi(m + 1);
         vec_e_1_sh = VecByDigit(vec_e_1, varrho);
         for (int i = 0; i < m; i++)
         {
             matrix_psi = RotateMatrix(matrix_psi, sigma, i);
-            vectorPrintFile(matrix_psi, fout);
+            //vectorPrintFile(matrix_psi, fout);
             sigma = MatrixByMatrix(matrix_psi, sigma);
-            vectorPrintFile(sigma, fout);
+            //vectorPrintFile(sigma, fout);
             vec_e_1_sh = MatrixByVec(matrix_psi, vec_e_1_sh);
             //vectorPrintFile(vec_e_1_sh, fout);
         }
@@ -178,12 +186,13 @@ int main()
         vector<double> temp(teta[0].size(), 0.0);
         for (int i = 0; i < m; i++)
         {
-            temp = VecAddVec(temp, VecByDigit(teta[i], vec_z[i]));
+            TEMP = VecByDigit(teta[i], vec_z[i]);
+            temp = VecAddVec(temp, TEMP);
         }
         vec_q = VecAddVec(vec_q, temp);
         //vectorPrintFile(vec_q, fout);
         cout << "Iteration #" << counter - 1 << " end!\n\n";
-        fout << "Iteration #" << counter - 1 << " end!\t" << EuqlidNorm(MatrixByVec(EMatrix, vec_R_)) << endl << endl;
+        fout << "Iteration #" << counter - 1 << " end!\t" << NormTemp << endl << endl;
 
     };
 
@@ -201,7 +210,7 @@ int main()
 
     //vectorPrintFile(vec_q, fout);
     //vectorPrintFile(vec_X, fout);
-    vectorPrintFile(temp_uzl, fout);
+    //vectorPrintFile(temp_uzl, fout);
 
     if (vec_q.size() == temp_uzl.size()) cout << "size equal";
 

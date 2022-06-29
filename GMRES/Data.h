@@ -3,7 +3,7 @@
 
 
 namespace data {
-	const int N = 4;
+	const int N = 50;
 	const double l = 1.0;
 	const double h = l / static_cast<double>(N);
     
@@ -19,7 +19,7 @@ namespace data {
         return 0.0-2.0 * (x * (x - 1.0) + y * (y - 1.0));
     }
 
-	vector<vector<double>> fillingVectorK(int N) {
+	vector<vector<double>> fillingVectorK(vector<vector<double>>& matrix, int N) {
 		vector<vector<double>> temp((N-1)*(N-1));
         for (int i = 0; i < (N - 1) * (N - 1); i++)
         {
@@ -27,7 +27,7 @@ namespace data {
                 if (i == j) {
                     temp[i].push_back(4.0);
                 }
-                else if ((abs(j - i) == 1 or abs(j - i) == 3)) temp[i].push_back(-1.0);
+                else if ((abs(j - i) == 1 or abs(j - i) == N-1)) temp[i].push_back(-1.0);
                 else
                 {
                     temp[i].push_back(0);
@@ -43,7 +43,7 @@ namespace data {
         return temp;
 	}
     
-    vector<double> fillVectorX(int N) {
+    vector<double> fillVectorX(vector<double>& vec, int N) {
         vector<vector<double>> temp;
         
         

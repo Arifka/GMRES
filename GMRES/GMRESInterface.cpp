@@ -1,6 +1,6 @@
 #include "GMRESInterface.h"
 
-vector<vector<double>> GMRESInterface::Transponir(vector<vector<double>> matrix)
+vector<vector<double>> GMRESInterface::Transponir(vector<vector<double>> &matrix)
 {
     size_t maxSize = 0;
     for (int i = 0; i < matrix.size(); i++)
@@ -19,7 +19,7 @@ vector<vector<double>> GMRESInterface::Transponir(vector<vector<double>> matrix)
     return temp;
 }
 
-vector<vector<double>> GMRESInterface::NachPriblizh(vector<vector<double>> Matrix)
+vector<vector<double>> GMRESInterface::NachPriblizh(vector<vector<double>> &Matrix)
 {
     vector<vector<double>> temp(Matrix.size());
     for (int i = 0; i < Matrix.size(); i++)
@@ -29,7 +29,7 @@ vector<vector<double>> GMRESInterface::NachPriblizh(vector<vector<double>> Matri
     return temp;
 }
 
-vector<double> GMRESInterface::NachPriblizh(vector<double> vec) {
+vector<double> GMRESInterface::NachPriblizh(vector<double> &vec) {
     vector<double> temp(vec.size());
     for (int i = 0; i < vec.size(); i++)
     {
@@ -38,7 +38,7 @@ vector<double> GMRESInterface::NachPriblizh(vector<double> vec) {
     return temp;
 }
 
-vector<vector<double>> GMRESInterface::RotateMatrix(vector<vector<double>> matrix_psi, vector<vector<double>> matrix_sigma, int ind)
+vector<vector<double>> GMRESInterface::RotateMatrix(vector<vector<double>> &matrix_psi, vector<vector<double>> &matrix_sigma, int ind)
 {
     vector<vector<double>> temp(matrix_psi.size());
     for (int i = 0; i < matrix_psi.size(); i++)
@@ -62,7 +62,7 @@ vector<vector<double>> GMRESInterface::RotateMatrix(vector<vector<double>> matri
     return temp;
 }
 
-vector<double> GMRESInterface::VecByMatrix(vector<double> Lvec, vector<vector<double>> RMatrix)
+vector<double> GMRESInterface::VecByMatrix(vector<double> &Lvec, vector<vector<double>> &RMatrix)
 {
     vector<double> temp;
     for (int i = 0; i < Lvec.size(); i++)
@@ -75,10 +75,9 @@ vector<double> GMRESInterface::VecByMatrix(vector<double> Lvec, vector<vector<do
         temp.push_back(sum);
     }
     return temp;
-    
 }
 
-vector<vector<double>> GMRESInterface::MatrixByMatrix(vector<vector<double>> LMatrix, vector<vector<double>> RMatrix)
+vector<vector<double>> GMRESInterface::MatrixByMatrix(vector<vector<double>> &LMatrix, vector<vector<double>> &RMatrix)
 {
     vector<vector<double>> temp(LMatrix.size());
     for (int i = 0; i < LMatrix.size(); i++)
@@ -96,7 +95,7 @@ vector<vector<double>> GMRESInterface::MatrixByMatrix(vector<vector<double>> LMa
     return temp;
 }
 
-vector<double> GMRESInterface::MatrixByVec(vector<vector<double>> LMatrix, vector<double> RVec)
+vector<double> GMRESInterface::MatrixByVec(vector<vector<double>> &LMatrix, vector<double> &RVec)
 {
     vector<double> temp;
     for (int i = 0; i < LMatrix.size(); i++)
@@ -111,7 +110,7 @@ vector<double> GMRESInterface::MatrixByVec(vector<vector<double>> LMatrix, vecto
     return temp;
 }
 
-vector<vector<double>> GMRESInterface::MatrixByDigit(vector<vector<double>> LMatrix, double digit)
+vector<vector<double>> GMRESInterface::MatrixByDigit(vector<vector<double>> &LMatrix, double digit)
 {
     vector<vector<double>> temp = LMatrix;
     for (int i = 0; i < LMatrix.size(); i++)
@@ -123,7 +122,7 @@ vector<vector<double>> GMRESInterface::MatrixByDigit(vector<vector<double>> LMat
     return temp;
 }
 
-vector<double> GMRESInterface::VecByDigit(vector<double> vec, double digit)
+vector<double> GMRESInterface::VecByDigit(vector<double> &vec, double digit)
 {
     vector<double> temp = vec;
     for (int i = 0; i < vec.size(); i++)
@@ -133,7 +132,7 @@ vector<double> GMRESInterface::VecByDigit(vector<double> vec, double digit)
     return temp;
 }
 
-vector<double> GMRESInterface::VecMinusVec(vector<double> LVec, vector<double> RVec)
+vector<double> GMRESInterface::VecMinusVec(vector<double> &LVec, vector<double> &RVec)
 {
     vector<double> temp(LVec.size());
     for (int i = 0; i < temp.size(); i++)
@@ -143,7 +142,7 @@ vector<double> GMRESInterface::VecMinusVec(vector<double> LVec, vector<double> R
     return temp;
 }
 
-vector<double> GMRESInterface::VecAddVec(vector<double> LVec, vector<double> RVec)
+vector<double> GMRESInterface::VecAddVec(vector<double> &LVec, vector<double> &RVec)
 {
     vector<double> temp(LVec.size());
     for (int i = 0; i < temp.size(); i++)
@@ -153,7 +152,7 @@ vector<double> GMRESInterface::VecAddVec(vector<double> LVec, vector<double> RVe
     return temp;
 }
 
-long double GMRESInterface::ScalarVecByVec(vector<double> LVec, vector<double> RVec)
+long double GMRESInterface::ScalarVecByVec(vector<double> &LVec, vector<double> &RVec)
 {
     long double sum = 0.0;
     for (int i = 0; i < LVec.size(); i++)
@@ -163,7 +162,7 @@ long double GMRESInterface::ScalarVecByVec(vector<double> LVec, vector<double> R
     return sum;
 }
 
-long double GMRESInterface::EuqlidNorm(vector<vector<double>> Matrix)
+long double GMRESInterface::EuqlidNorm(vector<vector<double>> &Matrix)
 {
     long double sum = 0.0;
     for (int i = 0; i < Matrix.size(); i++)
@@ -176,7 +175,7 @@ long double GMRESInterface::EuqlidNorm(vector<vector<double>> Matrix)
     return sqrtl(sum);
 }
 
-long double GMRESInterface::EuqlidNorm(vector<double> vec) 
+long double GMRESInterface::EuqlidNorm(vector<double> &vec) 
 {
     long double sum = 0.0;
     for (int i = 0; i < vec.size(); i++)
