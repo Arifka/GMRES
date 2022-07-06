@@ -20,6 +20,7 @@ namespace GMRESInterface
 	long double ScalarVecByVec(vector<double> &LVec, vector<double> &RVec);
 	long double EuqlidNorm(vector<vector<double>> &Matrix);
 	long double EuqlidNorm(vector<double> &vec);
-
+	void RazlozhenieLU(vector<vector<double>> &Matrix, vector<vector<double>> &L, vector<vector<double>>& U);
+	vector<double> Pereobuslav(vector<vector<double>>& L, vector<vector<double>>& U, vector<double> vr_o);
 };
 

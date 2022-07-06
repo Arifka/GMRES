@@ -3,7 +3,7 @@
 
 
 namespace data {
-	const int N = 50;
+	const int N = 4;
 	const double l = 1.0;
 	const double h = l / static_cast<double>(N);
     

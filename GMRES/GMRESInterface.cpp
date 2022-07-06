@@ -184,3 +184,75 @@ long double GMRESInterface::EuqlidNorm(vector<double> &vec)
     }
     return sqrtl(sum);
 }
+
+void GMRESInterface::RazlozhenieLU(vector<vector<double>>& Matrix, vector<vector<double>>& L, vector<vector<double>>& U)
+{
+    L[0][0] = Matrix[0][0];
+    for (int i = 0; i < Matrix[0].size(); i++)
+    {
+        U[0][i] = Matrix[0][i] / L[0][0];
+    }
+    for (int i = 1; i < Matrix.size(); i++)
+    {
+        L[i][0] = Matrix[i][0];
+        for (int j = 1; j < Matrix[i].size(); j++)
+        {
+            if (i > j) {
+                double sum = 0.0;
+                for (int k = 0; k < j; k++)
+                {
+                    sum += L[i][k] * U[k][j];
+                }
+                L[i][j] = Matrix[i][j] - sum;
+            }
+            if (i < j) {
+                double sum = 0.0;
+                for (int k = 0; k < i; k++)
+                {
+                    sum += L[i][k] * U[k][j];
+                }
+                U[i][j] = (Matrix[i][j] - sum) / L[i][i];
+            }
+            if (i == j) {
+                double sum = 0.0;
+                for (int k = 0; k < j; k++)
+                {
+                    sum += L[i][k] * U[k][j];
+                }
+                L[i][j] = Matrix[i][j] - sum;
+                sum = 0.0;
+                for (int k = 0; k < i; k++)
+                {
+                    sum += L[i][k] * U[k][j];
+                }
+                U[i][j] = (Matrix[i][j] - sum) / L[i][i];
+            }
+        }
+    }
+
+}
+
+vector<double> GMRESInterface::Pereobuslav(vector<vector<double>>& L, vector<vector<double>>& U, vector<double> vr_0)
+{
+    //1 stage
+    vector<double> vr_0_U(vr_0.size());
+    for (int i = 0; i < vr_0_U.size(); i++)
+    {
+        double sum = 0.0;
+        for (int k = 0; k < i; k++) {
+            sum += L[i][k] * vr_0_U[k];
+        }
+        vr_0_U[i] = (vr_0[i] - sum)/L[i][i];
+    }
+    //2 stage
+    vector<double> vr_1(vr_0.size());
+    for (int i = vr_0_U.size()-1; i >= 0; i--)
+    {
+        double sum = 0.0;
+        for (int k = vr_0_U.size()-1; k >= i; k--) {
+            sum += U[i][k] * vr_1[k];
+        }
+        vr_1[i] = (vr_0_U[i] - sum) / U[i][i];
+    }
+    return vr_1;
+}

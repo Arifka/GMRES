@@ -88,6 +88,18 @@ int main()
             else EMatrix[i].push_back(0);
         }
     }
+    //vector<vector<double>> A = { {4, 3, 1}, {3, 5 ,7}, {4, 2, 6} };
+    vector<vector<double>> L = matrix_K;
+    vector<vector<double>> U = matrix_K;
+
+    L = NachPriblizh(L);
+    U = NachPriblizh(U);
+
+    RazlozhenieLU(matrix_K, L, U);
+
+    //vector<double> rv = { 3, 2, 1 };
+    
+    //vector<double> temp_ = Pereobuslav(L, U, rv);
 
 
     //vec_q = vec_X;
