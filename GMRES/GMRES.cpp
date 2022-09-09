@@ -72,13 +72,14 @@ int main()
     
 
     matrix_K = data::fillingVectorK(matrix_K, data::N);
-    //vectorPrintFile(matrix_K, fout);
+    vectorPrintFile(matrix_K, fout);
+    
     vec_X = data::fillVectorX(vec_X, data::N);
     //vectorPrintFile(vec_X, fout);
 
     //MatrixView(vec_X);
 
-    vector<vector<double>> EMatrix((data::N - 1) * (data::N - 1));
+    /*vector<vector<double>> EMatrix((data::N - 1) * (data::N - 1));
 
     for (int i = 0; i < (data::N - 1) * (data::N - 1); i++)
     {
@@ -87,7 +88,7 @@ int main()
             if (i == j) EMatrix[i].push_back(1);
             else EMatrix[i].push_back(0);
         }
-    }
+    }*/
     //vector<vector<double>> A = { {4, 3, 1}, {3, 5 ,7}, {4, 2, 6} };
     vector<vector<double>> L = matrix_K;
     vector<vector<double>> U = matrix_K;
@@ -96,6 +97,13 @@ int main()
     U = NachPriblizh(U);
 
     RazlozhenieLU(matrix_K, L, U);
+
+    vectorPrintFile(L, fout);
+    vectorPrintFile(U, fout);
+
+    vector<vector<double>> TEmp = MatrixByMatrix(L, U);
+
+    vectorPrintFile(TEmp, fout);
 
     //vector<double> rv = { 3, 2, 1 };
     
@@ -108,12 +116,11 @@ int main()
     vector<double> vec_R_1;
     vector<double> TEMP = MatrixByVec(matrix_K, vec_q);
     vec_R_0 = VecMinusVec(vec_X, TEMP);
-    vector<double> vec_R_ = vec_R_0;
+    vector<double> vec_R_1_ = Pereobuslav(L, U, vec_R_0);
+    vec_R_1 = Pereobuslav(L, U, vec_R_0);
     //1 stage
-    TEMP = MatrixByVec(EMatrix, vec_R_);
-    long double NormTemp = EuqlidNorm(TEMP);
-    TEMP = MatrixByVec(EMatrix, vec_R_0);
-    long double NormZero = eps * EuqlidNorm(TEMP);
+    long double NormTemp = EuqlidNorm(vec_R_1_);
+    long double NormZero = eps * EuqlidNorm(vec_R_1);
     /*cout << EuqlidNorm(MatrixByVec(EMatrix, vec_R_)) << endl;
     cout << eps * EuqlidNorm(MatrixByVec(EMatrix, vec_R_0));*/
     // EuqlidNorm(MatrixByVec(EMatrix, vec_R_0)) <= eps * EuqlidNorm(MatrixByVec(EMatrix, vec_R_0))
@@ -122,14 +129,14 @@ int main()
         //2 stage
         counter++;
         TEMP = MatrixByVec(matrix_K, vec_q);
-        vec_R_ = VecMinusVec(vec_X, TEMP);
-        NormTemp = EuqlidNorm(vec_R_);
-        vec_R_1 = MatrixByVec(EMatrix, vec_R_);
+        vec_R_0 = VecMinusVec(vec_X, TEMP);
+        vec_R_1_ = Pereobuslav(L, U, vec_R_0);
+        NormTemp = EuqlidNorm(vec_R_1_);
         //3 stage
-        long double varrho = EuqlidNorm(vec_R_1);
+        long double varrho = NormTemp;
         //4 stage
         vector<vector<double>> teta;
-        teta.push_back(VecByDigit(vec_R_1, 1.0 / varrho));
+        teta.push_back(VecByDigit(vec_R_1_, 1.0 / varrho));
         //5 stage
         vector<vector<double>> sigma;
         for (int j = 0; j < m; j++)
@@ -137,7 +144,7 @@ int main()
             //6 stage
             vector<double> rho;
             vector<double> rho_ = MatrixByVec(matrix_K, teta[j]);
-            rho = MatrixByVec(EMatrix, rho_);
+            rho = Pereobuslav(L, U, rho_);
             //7 stage
             //vectorPrintFile(rho, fout);
             //vector<vector<double>> sigma(m);

@@ -21,25 +21,45 @@ namespace data {
 
 	vector<vector<double>> fillingVectorK(vector<vector<double>>& matrix, int N) {
 		vector<vector<double>> temp((N-1)*(N-1));
+        int kvB = 0;
+        int kvE = N - 1;
         for (int i = 0; i < (N - 1) * (N - 1); i++)
         {
             for (int j = 0; j < (N - 1) * (N - 1); j++) {
-                if (i == j) {
+                if (i + 1 > kvE)
+                {
+                    kvB += N - 1;
+                    kvE += N - 1;
+                }
+                if (j < kvE && j >= kvB) {
+                    if (i == j) temp[i].push_back(4.0);
+                    else {
+                        if (abs(i - j) == 1) temp[i].push_back(-1.0);
+                        else temp[i].push_back(0.0);
+                    }
+                }
+                else
+                {
+                    if (abs(i - j) == N - 1) temp[i].push_back(-1.0);
+                    else temp[i].push_back(0.0);
+                }
+                
+                /*if (i == j) {
                     temp[i].push_back(4.0);
                 }
                 else if ((abs(j - i) == 1 or abs(j - i) == N-1)) temp[i].push_back(-1.0);
                 else
                 {
                     temp[i].push_back(0);
-                }
+                }*/
             }
         }
-        for (int k = N-2; k < (N - 1) * (N - 1); k += (N - 1))
+        /*for (int k = N-2; k < (N - 1) * (N - 1); k += (N - 1))
         {
             if (k + (N - 1) >= (N - 1) * (N - 1)) break;
             temp[k][k + 1] = 0.0;
             temp[k + 1][k] = 0.0;
-        }
+        }*/
         return temp;
 	}
     
