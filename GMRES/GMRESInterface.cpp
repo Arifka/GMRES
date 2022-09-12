@@ -197,35 +197,37 @@ void GMRESInterface::RazlozhenieLU(vector<vector<double>>& Matrix, vector<vector
         L[i][0] = Matrix[i][0];
         for (int j = 1; j < Matrix[i].size(); j++)
         {
-            if (i > j) {
-                double sum = 0.0;
-                for (int k = 0; k < j; k++)
-                {
-                    sum += L[i][k] * U[k][j];
+            if (Matrix[i][j] != 0.0) {
+                if (i > j) {
+                    double sum = 0.0;
+                    for (int k = 0; k < j; k++)
+                    {
+                        sum += L[i][k] * U[k][j];
+                    }
+                    L[i][j] = Matrix[i][j] - sum;
                 }
-                L[i][j] = Matrix[i][j] - sum;
-            }
-            if (i < j) {
-                double sum = 0.0;
-                for (int k = 0; k < i; k++)
-                {
-                    sum += L[i][k] * U[k][j];
+                if (i < j) {
+                    double sum = 0.0;
+                    for (int k = 0; k < i; k++)
+                    {
+                        sum += L[i][k] * U[k][j];
+                    }
+                    U[i][j] = (Matrix[i][j] - sum) / L[i][i];
                 }
-                U[i][j] = (Matrix[i][j] - sum) / L[i][i];
-            }
-            if (i == j) {
-                double sum = 0.0;
-                for (int k = 0; k < j; k++)
-                {
-                    sum += L[i][k] * U[k][j];
+                if (i == j) {
+                    double sum = 0.0;
+                    for (int k = 0; k < j; k++)
+                    {
+                        sum += L[i][k] * U[k][j];
+                    }
+                    L[i][j] = Matrix[i][j] - sum;
+                    sum = 0.0;
+                    for (int k = 0; k < i; k++)
+                    {
+                        sum += L[i][k] * U[k][j];
+                    }
+                    U[i][j] = (Matrix[i][j] - sum) / L[i][i];
                 }
-                L[i][j] = Matrix[i][j] - sum;
-                sum = 0.0;
-                for (int k = 0; k < i; k++)
-                {
-                    sum += L[i][k] * U[k][j];
-                }
-                U[i][j] = (Matrix[i][j] - sum) / L[i][i];
             }
         }
     }

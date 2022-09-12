@@ -72,7 +72,7 @@ int main()
     
 
     matrix_K = data::fillingVectorK(matrix_K, data::N);
-    //vectorPrintFile(matrix_K, fout);
+    vectorPrintFile(matrix_K, fout);
     vec_X = data::fillVectorX(vec_X, data::N);
     //vectorPrintFile(vec_X, fout);
 
