@@ -95,6 +95,12 @@ vector<vector<double>> GMRESInterface::MatrixByMatrix(vector<vector<double>> &LM
     return temp;
 }
 
+vector<vector<double>> GMRESInterface::MatrixKbyMatrix(vector<vector<double>>& K, vector<vector<double>> Matrix)
+{
+    
+    return vector<vector<double>>();
+}
+
 vector<double> GMRESInterface::MatrixByVec(vector<vector<double>> &LMatrix, vector<double> &RVec)
 {
     vector<double> temp;
@@ -185,54 +191,88 @@ long double GMRESInterface::EuqlidNorm(vector<double> &vec)
     return sqrtl(sum);
 }
 
-void GMRESInterface::RazlozhenieLU(vector<vector<double>>& Matrix, vector<vector<double>>& L, vector<vector<double>>& U)
-{
-    L[0][0] = Matrix[0][0];
-    for (int i = 0; i < Matrix[0].size(); i++)
+void GMRESInterface::RazlozhenieLU(vector<vector<double>>& Matrix, vector<vector<double>>& L, vector<vector<double>>& U, int N) {
+    /*
+    * L[0] - central
+    * L[1] - first nizh
+    * L[2] - last nizh
+    * U[0] - central
+    * U[1] - first verh
+    * U[2] - last verh
+    */
+    L[2].insert(L[2].begin(), N - 1, 0.0);
+    L[1].push_back(0.0);
+    L[0].push_back(Matrix[2][0]);
+    U[0].push_back(1.0);
+    U[1].push_back(Matrix[1][0] / L[0][0]);
+    U[2].push_back(Matrix[0][0] / L[0][0]);
+    for (int i = 1; i < N-1; i++)
     {
-        U[0][i] = Matrix[0][i] / L[0][0];
+        L[1].push_back(Matrix[3][i]);
+        L[0].push_back(Matrix[2][i] - L[1][i] * U[1][i - 1]);
+        U[0].push_back(1.0);
+        U[1].push_back(Matrix[1][i] / L[0][i]);
+        U[2].push_back(Matrix[0][i] / L[0][i]);
     }
-    for (int i = 1; i < Matrix.size(); i++)
+    for (int i = N-1; i < (N-1)*(N-1); i++)
     {
-        L[i][0] = Matrix[i][0];
-        for (int j = 1; j < Matrix[i].size(); j++)
-        {
-            if (Matrix[i][j] != 0.0) {
-                if (i > j) {
-                    double sum = 0.0;
-                    for (int k = 0; k < j; k++)
-                    {
-                        sum += L[i][k] * U[k][j];
-                    }
-                    L[i][j] = Matrix[i][j] - sum;
-                }
-                if (i < j) {
-                    double sum = 0.0;
-                    for (int k = 0; k < i; k++)
-                    {
-                        sum += L[i][k] * U[k][j];
-                    }
-                    U[i][j] = (Matrix[i][j] - sum) / L[i][i];
-                }
-                if (i == j) {
-                    double sum = 0.0;
-                    for (int k = 0; k < j; k++)
-                    {
-                        sum += L[i][k] * U[k][j];
-                    }
-                    L[i][j] = Matrix[i][j] - sum;
-                    sum = 0.0;
-                    for (int k = 0; k < i; k++)
-                    {
-                        sum += L[i][k] * U[k][j];
-                    }
-                    U[i][j] = (Matrix[i][j] - sum) / L[i][i];
-                }
-            }
-        }
+        L[2].push_back(Matrix[4][i]);
+        L[1].push_back(Matrix[3][i]);
+        L[0].push_back(Matrix[2][i]-(L[2][i]*U[2][i-(N-1)] + L[1][i] * U[1][i-1]));
+        U[0].push_back(1.0);
+        U[1].push_back(Matrix[1][i] / L[0][i]);
+        U[2].push_back(Matrix[0][i] / L[0][i]);
     }
-
 }
+
+//void GMRESInterface::RazlozhenieLU(vector<vector<double>>& Matrix, vector<vector<double>>& L, vector<vector<double>>& U, int N)
+//{
+//    L[0][0] = Matrix[2][0];
+//    for (int i = 0; i < Matrix[0].size(); i++)
+//    {
+//        U[0][i] = Matrix[0][i] / L[0][0];
+//    }
+//    for (int i = 1; i < Matrix.size(); i++)
+//    {
+//        L[i][0] = Matrix[i][0];
+//        for (int j = 1; j < Matrix[i].size(); j++)
+//        {
+//            if (Matrix[i][j] != 0.0) {
+//                if (i > j) {
+//                    double sum = 0.0;
+//                    for (int k = 0; k < j; k++)
+//                    {
+//                        sum += L[i][k] * U[k][j];
+//                    }
+//                    L[i][j] = Matrix[i][j] - sum;
+//                }
+//                if (i < j) {
+//                    double sum = 0.0;
+//                    for (int k = 0; k < i; k++)
+//                    {
+//                        sum += L[i][k] * U[k][j];
+//                    }
+//                    U[i][j] = (Matrix[i][j] - sum) / L[i][i];
+//                }
+//                if (i == j) {
+//                    double sum = 0.0;
+//                    for (int k = 0; k < j; k++)
+//                    {
+//                        sum += L[i][k] * U[k][j];
+//                    }
+//                    L[i][j] = Matrix[i][j] - sum;
+//                    sum = 0.0;
+//                    for (int k = 0; k < i; k++)
+//                    {
+//                        sum += L[i][k] * U[k][j];
+//                    }
+//                    U[i][j] = (Matrix[i][j] - sum) / L[i][i];
+//                }
+//            }
+//        }
+//    }
+//
+//}
 
 vector<double> GMRESInterface::Pereobuslav(vector<vector<double>>& L, vector<vector<double>>& U, vector<double> vr_0)
 {

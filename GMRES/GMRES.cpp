@@ -41,6 +41,38 @@ void vectorPrintFile(vector<vector<double>> &vec, ostream& fout) {
     fout << endl << endl;
 }
 
+void vectorPrint_K_File(vector<vector<double>>& vec, ostream& fout) {
+    fout.setf(ios::left);
+    int kvB = 0;
+    int kvE = data::N - 1;
+    for (int i = 0; i < (data::N - 1) * (data::N - 1); i++) {
+        for (int j = 0; j < (data::N - 1) * (data::N - 1); j++) {
+            fout.width(20);
+            if (i + 1 > kvE)
+            {
+                kvB += data::N - 1;
+                kvE += data::N - 1;
+            }
+            if (j < kvE && j >= kvB) {
+                if (i == j) fout << vec[2][j];
+                else {
+                    if (abs(i - j) == 1) fout << vec[1][j];
+                    else fout << 0.0;
+                }
+            }
+            else
+            {
+                if (abs(i - j) == data::N - 1) fout << vec[0][j];
+                else fout << 0.0;
+            }
+            //fout << vec[i][j];
+        }
+        fout << endl;
+    }
+    fout.unsetf(ios::left);
+    fout << endl << endl;
+}
+
 void vectorPrintFile(vector<double> &vec, ostream& fout) {
     fout.setf(ios::left); 
         for (int j = 0; j < vec.size(); j++) {
@@ -66,17 +98,16 @@ int main()
     ofstream fout(fileName);
 
     vector<double> vec_q((data::N - 1) * (data::N - 1), 0.0);
-    vector<vector<double>> matrix_K((data::N - 1) * (data::N - 1));
+    vector<vector<double>> matrix_K(5);
     
     vector<double> vec_X((data::N - 1) * (data::N - 1));
     
 
     matrix_K = data::fillingVectorK(matrix_K, data::N);
     vectorPrintFile(matrix_K, fout);
+    //vectorPrint_K_File(matrix_K, fout);
     vec_X = data::fillVectorX(vec_X, data::N);
-    //vectorPrintFile(vec_X, fout);
-
-    //MatrixView(vec_X);
+    
 
     vector<vector<double>> EMatrix((data::N - 1) * (data::N - 1));
 
@@ -89,13 +120,16 @@ int main()
         }
     }
     //vector<vector<double>> A = { {4, 3, 1}, {3, 5 ,7}, {4, 2, 6} };
-    vector<vector<double>> L = matrix_K;
-    vector<vector<double>> U = matrix_K;
+    vector<vector<double>> L(3);
+    vector<vector<double>> U(3);
 
-    L = NachPriblizh(L);
-    U = NachPriblizh(U);
+    /*L = NachPriblizh(L);
+    U = NachPriblizh(U);*/
 
-    RazlozhenieLU(matrix_K, L, U);
+    RazlozhenieLU(matrix_K, L, U, data::N);
+
+    vectorPrintFile(L, fout);
+    vectorPrintFile(U, fout);
 
     //vector<double> rv = { 3, 2, 1 };
     

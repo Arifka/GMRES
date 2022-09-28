@@ -22,7 +22,16 @@ namespace data {
 	vector<vector<double>> fillingVectorK(vector<vector<double>>& matrix, int N) {
         int kvB = 0;
         int kvE = N - 1;
-		vector<vector<double>> temp((N-1)*(N-1));
+		vector<vector<double>> K(5);
+        /*
+        K[0] - last verh diag
+        K[1] - first verh diag
+        K[2] - central diag
+        K[3] - first nizh diag
+        K[5] - last nizh diag
+        */
+        K[3].push_back(0.0);
+        K[4].insert(K[4].begin(), N - 1, 0.0);
         for (int i = 0; i < (N - 1) * (N - 1); i++)
         {
             for (int j = 0; j < (N - 1) * (N - 1); j++) {
@@ -32,20 +41,26 @@ namespace data {
                     kvE += N - 1;
                 }
                 if (j < kvE && j >= kvB) {
-                    if (i == j) temp[i].push_back(4.0);
+                    if (i == j) K[2].push_back(4.0);
                     else {
-                        if (abs(i - j) == 1) temp[i].push_back(-1.0);
-                        else temp[i].push_back(0.0);
+                        if (j > i and abs(i - j) == 1) K[1].push_back(-1.0);
+                        if (i > j and abs(i - j) == 1) K[3].push_back(-1.0);
+                        //else temp[i].push_back(0.0);
                     }
                 }
                 else
                 {
-                    if (abs(i - j) == N - 1) temp[i].push_back(-1.0);
-                    else temp[i].push_back(0.0);
+                    if (j > i and abs(i - j) == 1) K[1].push_back(0.0);
+                    if (i > j and abs(i - j) == 1) K[3].push_back(0.0);
+                    if (j > i and abs(i - j) == N - 1) K[0].push_back(-1.0);
+                    if (i > j and abs(i - j) == N - 1) K[4].push_back(-1.0);
+                    //else temp[i].push_back(0.0);
                 }
             }
         }
-        return temp;
+        K[0].insert(K[0].end(), N - 1, 0.0);
+        K[1].push_back(0.0);
+        return K;
 	}
     
     vector<double> fillVectorX(vector<double>& vec, int N) {
