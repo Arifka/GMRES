@@ -1,0 +1,7 @@
+Iteration #0 end!	0.106181
+
+Iteration #1 end!	3.81687e-08
+
+
+
+0.00355556	5

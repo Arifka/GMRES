@@ -1,0 +1,99 @@
+Iteration #0 end!	0.0118021
+
+Iteration #1 end!	0.00895088
+
+Iteration #2 end!	0.00723958
+
+Iteration #3 end!	0.0061538
+
+Iteration #4 end!	0.0052486
+
+Iteration #5 end!	0.00449042
+
+Iteration #6 end!	0.00384732
+
+Iteration #7 end!	0.00330913
+
+Iteration #8 end!	0.00284988
+
+Iteration #9 end!	0.0024585
+
+Iteration #10 end!	0.00212262
+
+Iteration #11 end!	0.00183484
+
+Iteration #12 end!	0.00158704
+
+Iteration #13 end!	0.00137376
+
+Iteration #14 end!	0.00118963
+
+Iteration #15 end!	0.00103064
+
+Iteration #16 end!	0.000893137
+
+Iteration #17 end!	0.000774144
+
+Iteration #18 end!	0.000671133
+
+Iteration #19 end!	0.000581873
+
+Iteration #20 end!	0.000504556
+
+Iteration #21 end!	0.000437512
+
+Iteration #22 end!	0.000379418
+
+Iteration #23 end!	0.000329026
+
+Iteration #24 end!	0.000285353
+
+Iteration #25 end!	0.000247462
+
+Iteration #26 end!	0.00021462
+
+Iteration #27 end!	0.000186124
+
+Iteration #28 end!	0.000161423
+
+Iteration #29 end!	0.000139991
+
+Iteration #30 end!	0.000121412
+
+Iteration #31 end!	0.000105292
+
+Iteration #32 end!	9.13169e-05
+
+Iteration #33 end!	7.9192e-05
+
+Iteration #34 end!	6.86805e-05
+
+Iteration #35 end!	5.95607e-05
+
+Iteration #36 end!	5.16543e-05
+
+Iteration #37 end!	4.47949e-05
+
+Iteration #38 end!	3.88481e-05
+
+Iteration #39 end!	3.36889e-05
+
+Iteration #40 end!	2.92161e-05
+
+Iteration #41 end!	2.53358e-05
+
+Iteration #42 end!	2.19717e-05
+
+Iteration #43 end!	1.90534e-05
+
+Iteration #44 end!	1.65233e-05
+
+Iteration #45 end!	1.43285e-05
+
+Iteration #46 end!	1.24257e-05
+
+Iteration #47 end!	1.0775e-05
+
+
+
+6.42156e-05	4900

@@ -119,7 +119,7 @@ vector<double> GMRESInterface::Matrix_K_ByVec(vector<vector<double>>& LMatrix, v
     vector<double> result;
     for (int i = 0; i < RVec.size(); i++)
     {
-        int sum = 0;
+        double sum = 0.0;
         sum += LMatrix[4][i] * temp[i];
         sum += LMatrix[3][i] * temp[i + blockSize - 1];
         sum += LMatrix[2][i] * temp[i + blockSize];
@@ -320,25 +320,29 @@ vector<double> GMRESInterface::Pereobuslav(vector<vector<double>>& L, vector<vec
     temp1.insert(temp1.begin(), blockSize, 0.0);
 
     //1 stage
-    vector<double> vr_0_U(vr_0.size());
-    for (int i = 0; i < vr_0_U.size(); i++)
+    vector<double> vr_0_U(vr_0.size() + blockSize, 0.0);
+    for (int i = 0; i < vr_0_U.size() - blockSize; i++)
     {
         double sum = 0.0;
-        sum += L[2][i] * temp1[i];
-        sum += L[1][i] * temp1[i + blockSize - 1];
-        vr_0_U[i] = (vr_0[i] - sum) / L[0][i];
+        sum += L[2][i] * vr_0_U[i];
+        sum += L[1][i] * vr_0_U[i + blockSize - 1];
+        vr_0_U[i + blockSize] = (vr_0[i] - sum) / L[0][i];
     }
 
     auto temp2 = vr_0_U;
     temp2.insert(temp2.end(), blockSize, 0.0);
     //2 stage
-    vector<double> vr_1(vr_0.size());
-    for (int i = vr_0_U.size() - 1; i >= 0; i--)
+    vector<double> vr_1(vr_0.size() + blockSize, 0.0);
+    for (int i = vr_0_U.size() - 1 - blockSize; i >= 0; i--)
     {
         double sum = 0.0;
-        sum += U[2][i] * temp2[i + blockSize];
-        sum += U[1][i] * temp2[i + 1];
-        vr_1[i] = (vr_0_U[i] - sum) / U[0][i];
+        sum += U[2][i] * vr_1[i + blockSize];
+        sum += U[1][i] * vr_1[i + 1];
+        vr_1[i] = (vr_0_U[i + blockSize] - sum) / U[0][i];
+    }
+    for (int i = 0; i < blockSize; i++)
+    {
+        vr_1.pop_back();
     }
     return vr_1;
 }
