@@ -38,7 +38,7 @@ vector<double> GMRESInterface::NachPriblizh(vector<double> &vec) {
     return temp;
 }
 
-vector<vector<double>> GMRESInterface::RotateMatrix(vector<vector<double>> &matrix_psi, vector<vector<double>> &matrix_sigma, int ind)
+vector<vector<double>> GMRESInterface::RotateMatrix(vector<vector<double>> matrix_psi, vector<vector<double>> matrix_sigma, int ind)
 {
     vector<vector<double>> temp(matrix_psi.size());
     for (int i = 0; i < matrix_psi.size(); i++)
@@ -95,12 +95,6 @@ vector<vector<double>> GMRESInterface::MatrixByMatrix(vector<vector<double>> &LM
     return temp;
 }
 
-vector<vector<double>> GMRESInterface::MatrixKbyMatrix(vector<vector<double>>& K, vector<vector<double>> Matrix)
-{
-    
-    return vector<vector<double>>();
-}
-
 vector<double> GMRESInterface::MatrixByVec(vector<vector<double>> &LMatrix, vector<double> &RVec)
 {
     vector<double> temp;
@@ -114,6 +108,26 @@ vector<double> GMRESInterface::MatrixByVec(vector<vector<double>> &LMatrix, vect
         temp.push_back(sum);
     }
     return temp;
+}
+
+vector<double> GMRESInterface::Matrix_K_ByVec(vector<vector<double>>& LMatrix, vector<double>& RVec)
+{
+    int blockSize = sqrt(RVec.size());
+    auto temp = RVec;
+    temp.insert(temp.begin(), blockSize, 0.0);
+    temp.insert(temp.end(), blockSize, 0.0);
+    vector<double> result;
+    for (int i = 0; i < RVec.size(); i++)
+    {
+        int sum = 0;
+        sum += LMatrix[4][i] * temp[i];
+        sum += LMatrix[3][i] * temp[i + blockSize - 1];
+        sum += LMatrix[2][i] * temp[i + blockSize];
+        sum += LMatrix[1][i] * temp[i + blockSize + 1];
+        sum += LMatrix[0][i] * temp[i + blockSize * 2];
+        result.push_back(sum);
+    }
+    return result;
 }
 
 vector<vector<double>> GMRESInterface::MatrixByDigit(vector<vector<double>> &LMatrix, double digit)
@@ -274,27 +288,57 @@ void GMRESInterface::RazlozhenieLU(vector<vector<double>>& Matrix, vector<vector
 //
 //}
 
+//vector<double> GMRESInterface::Pereobuslav(vector<vector<double>>& L, vector<vector<double>>& U, vector<double> vr_0)
+//{
+//    //1 stage
+//    vector<double> vr_0_U(vr_0.size());
+//    for (int i = 0; i < vr_0_U.size(); i++)
+//    {
+//        double sum = 0.0;
+//        for (int k = 0; k < i; k++) {
+//            sum += L[i][k] * vr_0_U[k];
+//        }
+//        vr_0_U[i] = (vr_0[i] - sum)/L[i][i];
+//    }
+//    //2 stage
+//    vector<double> vr_1(vr_0.size());
+//    for (int i = vr_0_U.size()-1; i >= 0; i--)
+//    {
+//        double sum = 0.0;
+//        for (int k = vr_0_U.size()-1; k >= i; k--) {
+//            sum += U[i][k] * vr_1[k];
+//        }
+//        vr_1[i] = (vr_0_U[i] - sum) / U[i][i];
+//    }
+//    return vr_1;
+//}
+
 vector<double> GMRESInterface::Pereobuslav(vector<vector<double>>& L, vector<vector<double>>& U, vector<double> vr_0)
 {
+    int blockSize = sqrt(vr_0.size());
+    auto temp1 = vr_0;
+    temp1.insert(temp1.begin(), blockSize, 0.0);
+
     //1 stage
     vector<double> vr_0_U(vr_0.size());
     for (int i = 0; i < vr_0_U.size(); i++)
     {
         double sum = 0.0;
-        for (int k = 0; k < i; k++) {
-            sum += L[i][k] * vr_0_U[k];
-        }
-        vr_0_U[i] = (vr_0[i] - sum)/L[i][i];
+        sum += L[2][i] * temp1[i];
+        sum += L[1][i] * temp1[i + blockSize - 1];
+        vr_0_U[i] = (vr_0[i] - sum) / L[0][i];
     }
+
+    auto temp2 = vr_0_U;
+    temp2.insert(temp2.end(), blockSize, 0.0);
     //2 stage
     vector<double> vr_1(vr_0.size());
-    for (int i = vr_0_U.size()-1; i >= 0; i--)
+    for (int i = vr_0_U.size() - 1; i >= 0; i--)
     {
         double sum = 0.0;
-        for (int k = vr_0_U.size()-1; k >= i; k--) {
-            sum += U[i][k] * vr_1[k];
-        }
-        vr_1[i] = (vr_0_U[i] - sum) / U[i][i];
+        sum += U[2][i] * temp2[i + blockSize];
+        sum += U[1][i] * temp2[i + 1];
+        vr_1[i] = (vr_0_U[i] - sum) / U[0][i];
     }
     return vr_1;
 }
